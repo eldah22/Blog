@@ -1,0 +1,211 @@
+﻿@model SABlog.Models.User
+
+@{
+    ViewBag.Title = Model.UserName + " - Përditëso Profilin";
+    var originalPassword = Model.Password;
+}
+
+
+<br />
+
+<section class="vh-50 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="col-12 col-lg-9 col-xl-7">
+                <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+                    <div class="card-body p-4 p-md-5">
+                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Përditëso Profilin</h3>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-4 pb-2 pb-md-0 mb-md-5" })
+                        @using (Html.BeginForm("Update", "User", FormMethod.Post, new { @class = "needs-validation", @novalidate = true }))
+                        {
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="FirstName">Emri</label>
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control form-control-lg", @required = true, maxlength = "30", pattern = "^\\S*$", onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Emri"!</div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="LastName">Mbiemri</label>
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control form-control-lg", @required = true, maxlength = "30", pattern = "^\\S*$", onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Mbiemri"!</div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="Email">Email</label>
+                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control form-control-lg", type = "email", @required = true, maxlength = "50", pattern = "^[\\w\\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$", onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Email"!</div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="UserName">Pseudonimi</label>
+                                        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control form-control-lg", @required = true, pattern = "^\\S*$", maxlength = "50", onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Pseudonimi"!</div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="Password">Fjalekalimi Aktual *</label>
+                                    <div class="input-group">
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-control-lg", type = "password", @placeholder = "Shkruaj Fjalëkalimin Aktual", @Value = "", @required = true, pattern = "^(?!^\\s)(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$", onkeyup = "removeLeadingSpaces(this)" } })
+                                        <span class="input-group-text togglePassword">
+                                            <i class="fa fa-eye" id="showPassword" onclick="togglePasswordVisibility('#showPassword', '#Password')" style="cursor: pointer"></i>
+                                        </span>
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Fjalëkalimi Aktual"!</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="mt-4 pt-2">
+                                <input class="btn btn-success ms-auto m-2" type="submit" value="Përditëso Profilin" />
+                            </div>
+
+                            @Html.HiddenFor(model => model.UserId)
+                            @Html.HiddenFor(model => model.RoleId)
+                        }
+
+                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5 mt-5">Përditëso Fjalëkalimin</h3>
+                        @using (Html.BeginForm("UpdatePassword", "User", FormMethod.Post, new { @class = "needs-validation", @novalidate = true }))
+                        {
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label" for="Password">Fjalekalimi Aktual *</label>
+                                    <div class="input-group">
+                                        <input id="currentPassword" name="currentPassword" pattern="^[^\\s].*" , onkeyup="removeLeadingSpaces(this)" placeholder="Shkruaj Fjalëkalimin Aktual" type="password" class="form-control form-control-lg" required />
+                                        <span class="input-group-text togglePassword">
+                                            <i class="fa fa-eye" id="showCurrentPassword" onclick="togglePasswordVisibility('#showCurrentPassword', '#currentPassword')" style="cursor: pointer"></i>
+                                        </span>
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Fjalëkalimi Aktual"!</div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <label class="form-label" for="Password">Fjalekalimi I Ri *</label>
+                                    <div class="input-group">
+                                        <input id="NewPassword" name="NewPassword" pattern="^[^\\s].*" , onkeyup="removeLeadingSpaces(this)" placeholder="Shkruaj Fjalëkalimin E Ri" type="password" class="form-control form-control-lg" required />
+                                        <span class="input-group-text togglePassword">
+                                            <i class="fa fa-eye" id="showNewPassword" onclick="togglePasswordVisibility('#showNewPassword', '#NewPassword')" style="cursor: pointer"></i>
+                                        </span>
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Fjalëkalimi I Ri"!</div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-md-6 pb-2">
+                                    <label class="form-label" for="Password">Konfirmo Fjalekalimin *</label>
+                                    <div class="input-group">
+                                        <input id="ConfirmPassword" name="ConfirmPassword" pattern="^[^\\s].*" , onkeyup="removeLeadingSpaces(this)" placeholder="Përsërit Fjalëkalimin" type="password" class="form-control form-control-lg" required />
+                                        <span class="input-group-text togglePassword">
+                                            <i class="fa fa-eye" id="showConfirmPassword" onclick="togglePasswordVisibility('#showConfirmPassword', '#ConfirmPassword')" style="cursor: pointer"></i>
+                                        </span>
+                                        <div class="invalid-feedback">Fjalëkalimet duhet të jenë të njëjtë!</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 ps-3">
+                                    <div class="alert px-4 py-3 mb-0 d-none alert-warning"
+                                         role="alert"
+                                         data-mdb-color="warning"
+                                         id="password-alert">
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="requirements leng">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                <i class="fas fa-times text-danger me-3"></i>
+                                                Fjalëkalimi duhet të ketë të paktën 8 karaktere
+                                            </li>
+                                            <li class="requirements big-letter">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                <i class="fas fa-times text-danger me-3"></i>
+                                                Fjalëkalimi duhet të ketë të paktën 1 shkronjë të madhe.
+                                            </li>
+                                            <li class="requirements num">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                <i class="fas fa-times text-danger me-3"></i>
+                                                Fjalëkalimi duhet të ketë të paktën 1 numër.
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="mt-4 pt-2">
+                                <input class="btn btn-success ms-auto m-2" type="submit" value="Përditëso Fjalëkalimin" />
+                                <a href="/u/@Model.UserName" class="btn btn-dark ms-auto m-2">
+                                    Kthehu
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="~/Assets/updateprofile.js"></script>
+<script src="~/Assets/common.js"></script>
+
+
+<style>
+
+    .wrong .fa-check {
+        display: none;
+    }
+
+    .good .fa-times {
+        display: none;
+    }
+</style>
+
+
+<script>
+
+    function togglePasswordVisibility(iconID, inputID) {
+        $(iconID).removeClass()
+        if ($(inputID).attr('type') == 'password') {
+            $(iconID).attr('class', 'fa fa-eye-slash')
+            $(inputID).attr('type', 'text')
+        } else {
+            $(iconID).attr('class', 'fa fa-eye')
+            $(inputID).attr('type', 'password')
+        }
+    }
+</script>

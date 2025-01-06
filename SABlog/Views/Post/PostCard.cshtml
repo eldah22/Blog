@@ -1,0 +1,72 @@
+﻿@model SABlog.Models.Post
+
+@using System.Globalization;
+
+@{
+    
+    string datetimecreated = Model.CreatedAt.ToString("d/M/yyyy - HH:mm", CultureInfo.InvariantCulture);
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="container mb-2">
+        
+        <div class="row d-flex align-items-center justify-content-center">
+            <div class="card">
+                <div class="d-flex justify-content-between py-1 px-3">
+                    <div class="d-flex flex-row align-items-center gap-3">
+                        <a style="text-decoration: none" href="/u/@Model.User.UserName">
+                            <img src="~/Content/Images/pfp.png" width="50" class="rounded-circle">
+                        </a>
+                        <div class="d-flex flex-column mt-3">
+                            <h5 class="text-dark font-weight-bold m-0">@Model.User.FirstName @Model.User.LastName</h5> 
+                            <p class="text-muted">@@@Model.User.UserName</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="mr-2 px-3 text-nowrap overflow-hidden" style="text-overflow: ellipsis">@((@Model.Title.Length > 100) ? @Model.Title.Substring(0, 100) + "..." : Model.Title)</p>
+                <div class="ratio ratio-16x9">
+                    <a href="/u/@Model.User.UserName/@Model.PostId">
+                        @if (Model.PostFiles.ElementAt(0).FileType == "Image")
+                        {
+                            <img src="data:image/@Model.PostFiles.ElementAt(0).Extension;base64,@Model.PostFiles.ElementAt(0).Content" class="img-fluid mx-auto h-100 w-100 rounded-2" style="object-fit: cover">
+                        }
+                        else
+                        {
+                            <img src="~/Content/Images/document.png" class="img-fluid mx-auto h-100 w-100 rounded-2" style="object-fit: cover">
+                        }
+                    </a>
+                </div>
+                <div class="p-2">
+                    <div class="d-flex justify-content-between p-3 gap-3">
+                        <div class="text-start overflow-auto text-nowrap">
+                            <span class="mr-2">@datetimecreated</span>
+                          
+                        </div>
+                        <div class="text-end overflow-auto text-nowrap">
+                            <div class="gap-2">
+                                @foreach (var c in Model.PostCategories.Take(2))
+                                {
+                                    <a class="badge bg-secondary text-decoration-none link-light" >@c.Category.Name</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+</body>
+</html>

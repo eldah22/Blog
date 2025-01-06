@@ -1,0 +1,112 @@
+﻿@using SABlog.Models;
+@model SABlog.Models.User
+
+@{
+    ViewBag.Title = Model.UserName;
+    var posts = Model.Posts.Where(it => !it.Deleted && it.PostStatu.Status == "Publik").ToList();
+    var unapprovedPosts = Model.Posts.Where(it => !it.Deleted && it.PostStatu.Status == "Draft").ToList();
+    var user = (User)ViewBag.LoggedInUser;
+
+    var tmp = posts.Select(it => it.PostCategories.Select(it2 => it2.Category)).Distinct();
+    List<Category> topCategories = new List<Category>();
+
+    foreach (var t in tmp)
+    {
+        foreach (var t1 in t)
+        {
+            if (!topCategories.Contains(t1)) { topCategories.Add(t1); }
+            if (topCategories.Count > 4) { break; }
+        }
+    }
+
+    topCategories = topCategories.OrderByDescending(it => it.PostCategories.Count).ToList();
+}
+
+<section style="background-color: #eee;">
+    <div class="container py-5">
+        
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <img src="~/Content/Images/pfp.png" alt="avatar"
+                             class="rounded-circle img-fluid" style="width: 150px;">
+                        <h5 class="my-3">@@@Model.UserName</h5>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="mb-0">Emri i Plotë</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="text-muted mb-0">@Model.FirstName @Model.LastName</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="mb-0">Email</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="text-muted mb-0">@Model.Email</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <p class="mb-0">Postimet</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <p class="text-muted mb-0">@posts.Count @((User.Identity.Name == Model.Email || user.Role.Name == "admin") ? ((unapprovedPosts.Count > 0) ? " (" + unapprovedPosts.Count + " të pa aprovuar)" : "" ) : "")</p>
+                            </div>
+                        </div>
+                        @if (posts.Count > 0)
+                        {
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="mb-0">Kategoritë e preferuara</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="text-muted mb-0">
+                                        @foreach (var c in topCategories)
+                                        {
+                                            <a class="badge bg-secondary text-decoration-none link-light" @*href="/category@((c.ParentCategoryId != null) ? $"/{c.Name}" : $"/{c.Name}"  )"*@>@c.Name</a>
+                                        }
+                                    </p>
+                                    </div>
+                                </div>
+                            }
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                @if (User.Identity.Name == Model.Email)
+                {
+                    <div class="text-end m-3">
+                        <a href="/createPost" class="btn btn-success ms-auto m-2">
+                            Krijo një Postim
+                        </a>
+                        <a href="/updateProfile" class="btn btn-dark ms-auto m-2">
+                            Përditëso Profilin
+                        </a>
+                    </div>
+                }
+                @if (posts.Count == 0)
+                {
+                    <h1 class="text-center p-5">Asnjë Postim</h1>
+                }
+                else
+                {
+                    foreach (var p in posts.OrderByDescending(it => it.CreatedAt))
+                    {
+                        Html.RenderPartial("~/Views/Post/PostCard.cshtml", p);
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

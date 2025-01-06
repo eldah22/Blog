@@ -1,0 +1,126 @@
+﻿@using PagedList.Mvc;
+@using SABlog.Models;
+@using System.Globalization;
+
+@model PagedList.IPagedList<SABlog.Models.Post>
+
+
+@{
+    ViewBag.Title = "Kërkim";
+    var query = (string)ViewBag.query;
+    var dateFrom = "";
+    var dateTo = "";
+    if ((string)ViewBag.dateFrom != null)
+    {
+        dateFrom = DateTime.ParseExact((string)ViewBag.dateFrom, "d/M/yyyy hh:mm:ss tt", CultureInfo.InvariantCulture).ToString("d/M/yyyy");
+
+    }
+    if ((string)ViewBag.dateTo != null)
+    {
+        dateTo = DateTime.ParseExact((string)ViewBag.dateTo, "d/M/yyyy hh:mm:ss tt", CultureInfo.InvariantCulture).ToString("d/M/yyyy");
+    }
+
+    var tmp = Model.Select(it => it.PostCategories.Select(it2 => it2.Category)).Distinct();
+    List<Category> availableCategories = new List<Category>();
+
+    foreach (var t in tmp)
+    {
+        foreach (var t1 in t)
+        {
+            if (!availableCategories.Contains(t1)) { availableCategories.Add(t1); }
+        }
+    }
+
+    var selectedCategories = "";
+    if((string)ViewBag.categories != null)
+    {
+        selectedCategories = (string)ViewBag.categories;
+    }
+}
+
+
+<div class="row d-flex justify-content-center">
+    <h1 class="text-center p-5 display-1">Kërkimi</h1>
+    <p class="text-danger mb-4 pb-2 pb-md-0 mb-md-5">@ViewBag.Failed</p>
+    <div class="row pb-5">
+        @using (Html.BeginForm("Search", "Home", FormMethod.Post))
+        {
+            <div class="d-flex justify-content-between">
+                <div class="row w-100">
+                    <div class="form-outline col-md-12 pb-4">
+                        <label for="query">Kerko</label>
+                        <input type="search" id="query" name="query" class="form-control mw-100" placeholder="Shkruaj tekstin e kërkimit" aria-label="Search" value="@query" />
+                    </div>
+                    <div class="form-outline col-md-3">
+                        <label for="dateFrom">Nga Data</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control datetimepicker" id="dateFrom" name="dateFrom" value="@dateFrom" autocomplete="off" placeholder="Zgjidh datën" />
+                        </div>
+                    </div>
+                    <div class="form-outline col-md-3">
+                        <label for="dateTo">Te Data</label>
+                        <div class="d-flex">
+                            <input type="text" class="form-control datetimepicker" id="dateTo" name="dateTo" value="@dateTo" autocomplete="off" placeholder="Zgjidh datën" />
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-3 col-sm-12 align-text-bottom text-md-end mt-auto pt-2">
+                        <button type="submit" class="btn btn-success w-2 text-center">
+                            Filtro
+                        </button>
+                        <a href="/search" class="btn btn-warning">Hiq Filtrat</a>
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+    <div class="row d-flex justify-content-between">
+        @if (Model.Count > 0)
+        {
+            <div class="col-md-8 order-1 order-md-0">
+
+                @foreach (var p in Model)
+                {
+                    Html.RenderPartial("~/Views/Post/PostCard.cshtml", p);
+                }
+
+                <span class="d-flex justify-content-center p-4">Faqja @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) nga @Model.PageCount</span>
+                <div class="d-flex justify-content-center">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+                   {
+                       UlElementClasses = new List<string> { "pagination" },
+                       LiElementClasses = new List<string> { "page-link" },
+                   })
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <h5 class="text-center p-5">Asnjë Postim me këto filtra</h5>
+        }
+        <br />
+    </div>
+</div>
+
+<style>
+    a {
+        text-decoration: none !important;
+    }
+
+    .page-link.active {
+        background-color: #28a745 !important;
+        border-color: transparent;
+    }
+
+    .page-link a {
+        color: black !important;
+    }
+</style>
+
+<script src="~/Assets/search.js"></script>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e4975da335d54460bcc27f1d9f57f720" Name="Diagram1">
+        <EntityTypeShape EntityType="Model1.Category" Width="1.5" PointX="5.25" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.Post" Width="1.5" PointX="5.25" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PostCategory" Width="1.5" PointX="7.5" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PostFile" Width="1.5" PointX="7.5" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.PostStatu" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.Role" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Model1.User" Width="1.5" PointX="3" PointY="4.5" IsExpanded="true" />
+        <AssociationConnector Association="Model1.FK__Category__Parent__45F365D3" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK__PostCateg__Categ__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK__Post__PostStatus__4AB81AF0" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK__Post__UserId__4BAC3F29" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK__PostCateg__PostI__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK__PostFile__PostId__5BE2A6F2" ManuallyRouted="false" />
+        <AssociationConnector Association="Model1.FK__User__RoleId__3F466844" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

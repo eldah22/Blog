@@ -1,0 +1,241 @@
+﻿@using SABlog.Models;
+@using System.Globalization;
+@using SABlog.Helpers;
+
+
+@model SABlog.ViewModels.PostInfoViewModel
+
+@{
+    ViewBag.Title = Model.Title;
+    var user = (User)ViewBag.LoggedInUser;
+    string datetimecreated = Model.CreatedAt.ToString("d/M/yyyy - HH:mm", CultureInfo.InvariantCulture);
+    string datetimeposted = Model.PublicatedAt?.ToString("d/M/yyyy - HH:mm", CultureInfo.InvariantCulture);
+
+    var helpr = new Helper();
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <article>
+                <header class="mb-4">
+                    <h1 class="fw-bolder mb-1" style="overflow-wrap: break-word" id="ttl">@Model.Title</h1>
+                    <div class="text-muted fst-italic mb-2">Krijuar në @datetimecreated dhe publikuar në @datetimeposted nga <a href="/u/@Model.User.UserName">@Model.User.UserName</a></div>
+                    @foreach (var c in Model.PostCategories)
+                    {
+                        <a class="badge bg-secondary text-decoration-none link-light" @*href="/category@((c.Category.Category2 != null) ? $"/{c.Category.Category2.Name}/{c.Category.Name}" : $"/{c.Category.Name}"  )"*@>@c.CategoryName</a>
+                    }
+                </header>
+                @if (Model.PostFiles.Count > 0)
+                {
+                    <div id="carouselExampleIndicators" class="carousel slide">
+                        <div class="carousel-indicators">
+                            @{ var i = 0;}
+                            @foreach (var f in Model.PostFiles)
+                            {
+                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@((i==0) ? "active" : "")" alia-label="Slide @i"></button>
+                                i++;
+                            }
+                        </div>
+                        <div class="carousel-inner ratio ratio-16x9 mb-4">
+                            @{ i = 0;}
+                            @foreach (var f in Model.PostFiles)
+                            {
+                                <div class="carousel-item @((i == 0) ? "active" : "")">
+                                    @if (f.FileType == "Image")
+                                    {
+                                        <img class="img-fluid mx-auto h-100 w-100 rounded-2" style="object-fit: cover" src="data:image/@f.Extension;base64,@f.Content">
+                                    }
+                                    else if (f.Extension == ".pdf")
+                                    {
+                                        <iframe class="img-fluid mx-auto h-100 w-100 rounded-2" frameborder="0" src="data:application/pdf;base64,@f.Content"></iframe>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex flex-column justify-content-center mx-auto h-100 w-100 rounded-2 align-items-center bg-dark text-light">
+                                            <h3>@f.FileName</h3>
+                                            <a class="btn btn-success my-2" href="data:application/octet-stream;base64,@f.Content" download="@f.FileName@f.Extension">Shkarko Dokumentin</a>
+                                        </div>
+                                    }
+                                </div>
+                                i++;
+                            }
+                        </div>
+                        <button class="carousel-control-prev h-25 my-auto" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next h-25 my-auto" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                }
+                <section class="mb-5">
+                    <p class="fs-5 mb-4" style="overflow-wrap: break-word" id="cnt">@Model.Content</p>
+                </section>
+            </article>
+
+        </div>
+
+        @if (Model.UserId == user.UserId)
+        {
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-header">Veprime qe mund te beni me postin tuaj:</div>
+                    <div class="card-body">
+
+                        <div class="row p-2">
+
+                            <div class="text-center row">
+                                <button type="button" class="btn btn-outline-info ms-auto m-4" onclick="showPostUpdateArea(@Model.PostId)">
+                                    Edito
+                                </button>
+
+                                <button type="button" class="btn btn-outline-danger ms-auto m-4" onclick="onPostDeleteModal()">Fshi</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+            </div>
+
+
+        }
+
+    </div>
+</div>
+
+<script>
+    function onPostDeleteModal() {
+        var modal = $(`
+         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+             <div class="modal-dialog">
+                 <div class="modal-content">
+                     <div class="modal-header">
+                         <h5 class="modal-title" id="exampleModalLabel">Konfirmo</h5>
+                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                     </div>
+                     <div class="modal-body">
+                         Jeni të sigurt që do të fshini këtë post?
+                     </div>
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Jo</button>
+                         <button type="button" onclick="onPostDelete()" data-bs-dismiss="modal" class="btn btn-danger">Fshi</button>
+                     </div>
+                 </div>
+             </div>
+         </div>`)
+        modal.modal("show")
+    }
+
+    function onPostDelete() {
+        $.ajax({
+            url: `/Post/DeletePost?postId=${@Model.PostId}`,
+            type: 'get',
+            contentType: 'application/json',
+            success: function (result) {
+                if (result.response != "success") {
+                    alert("Posti nuk u fshi dot")
+                } else {
+
+
+
+
+
+                    var href = "/";
+
+
+                    window.location = href;
+
+                }
+            }
+        })
+    }
+
+
+    function showPostUpdateArea(id) {
+
+
+        var updateModal = $(`
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Përditëso Postimin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style=" display: block;">
+
+                <div class="mb-3">
+                    <label for="inputText1" class="form-label">Titulli</label>
+                    <textarea type="text" class="form-control" id="inputText1" placeholder="Vendosni titullin"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="inputText2" class="form-label">Përshkrimi</label>
+                    <textarea rows="3" type="text" class="form-control" id="inputText2" placeholder="Vendosni përshkrimin"></textarea>
+                </div>
+
+
+
+                <p>Jeni të sigurt që dëshironi të përditësoni këtë postim?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Jo</button>
+                <button type="button" onclick="onPostUpdate()" data-bs-dismiss="modal" class="btn btn-primary">Përditëso</button>
+            </div>
+        </div>
+    </div>
+</div>`);
+
+   $('body').append(updateModal);
+
+
+        $('#inputText1').val(`@Model.Title`);
+        $('#inputText2').val(`@Model.Content`);
+
+        $('#updateModal').modal('show');
+$('#updateModal').modal('show');
+
+
+    }
+
+
+
+    function onPostUpdate() {
+        var postTitle = $('#inputText1').val().trim()
+        var postContent = $('#inputText2').val().trim()
+        var postId = @Model.PostId;
+        if (postTitle == '' || postContent == '') {
+            return
+        }
+        var info = {
+            postTitle: postTitle,
+            postContent: postContent,
+            postId: postId
+        };
+
+        $.ajax({
+            url: `/Post/UpdatePost`,
+            type: 'POST',
+            data: JSON.stringify(info),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                if (result.response != "success") {
+                    alert("Posti nuk u ndryshua dot")
+
+                } else {
+                    window.location.reload();
+                }
+            }
+        })
+    }
+
+
+</script>
+<script src="~/Assets/createpost.js"></script>
+
+<script src="~/Assets/common.js"></script>

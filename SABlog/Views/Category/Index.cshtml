@@ -1,0 +1,63 @@
+﻿@model List<SABlog.Models.Category>
+
+
+
+@{
+    ViewBag.Title = "Kategoritë";
+}
+
+
+<main>
+    <div class="album py-5">
+        <div class="container">
+            <h1 class="text-center p-5 display-1">Kategoritë</h1>
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (Context.User.IsInRole("admin"))
+                {
+                    <div class="text-end">
+                        <a type="button" href="/createCategory" class="btn btn-success ms-auto m-4">
+                            Krijo një Kategori
+                        </a>
+
+                    </div>
+                }
+            }
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+
+                @if (Model.Count > 0)
+                {
+                    foreach (var c in Model.OrderByDescending(it => it.PostCategories.Count))
+                    {
+                        <a class="text-reset text-decoration-none" id="cat-@c.CategoryId}" href="/category@((c.CategoryId != null) ? $"/{c.Name}" : $"/{c.Name}")">
+                            <div class="col">
+                                <div class="card shadow-sm">
+                                    <div class="row d-flex card-body">
+                                        <h5 class="card-title">@c.Name</h5>
+                                        <p class="card-text d-inline-block text-truncate" style="overflow: auto, white-space: nowrap">@c.Description</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div></div>
+                                            <div class="d-flex gap-2">
+                                                <span class="badge bg-success text-decoration-none link-light">@c.PostCategories.Where(it => !it.Post.Deleted && it.Post.PostStatu.Status == "Publik").Count() @((c.PostCategories.Count == 1) ? "Postim" : "Postime")</span>
+                                                <span class="badge bg-secondary text-decoration-none link-light">@c.PostCategories.Where(it => !it.Post.Deleted && it.Post.PostStatu.Status == "Publik").Select(it => it.Post.User).Distinct().Count() Postues</span>
+                                              
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <h1 class="text-center p-5">Asnjë Kategori</h1>
+                }
+
+            </div>
+        </div>
+    </div>
+</main>

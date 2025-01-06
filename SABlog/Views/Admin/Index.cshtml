@@ -1,0 +1,204 @@
+﻿@using SABlog.Models;
+
+@{
+    ViewBag.Title = "Admin";
+    var user = (User)ViewBag.LoggedInUser;
+}
+
+
+
+<br />
+
+<h1 class="text-center p-5 display-1">Postimet në pritje</h1>
+
+
+<div class="col-12 text-end">
+</div>
+
+
+@*@if (Model.Count() > 0)
+    {
+
+    }
+    else
+    {
+        <h1 class="text-center p-5">Asnjë Postim në pritje</h1>
+    }*@
+
+<div class="table-responsive">
+    <table class="table table-striped" id="post_table">
+        <thead>
+            <tr>
+                <th>
+                    Nr
+                </th>
+                <th>
+                    Titulli
+                </th>
+                <th>
+                    Numri i Skedarëve
+                </th>
+                <th>
+                    Postuesi
+                </th>
+                <th>
+                    Data e Postimit
+                </th>
+                <th>
+                    Statusi e Postimit
+                </th>
+                <th>
+                    Veprimet
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PostId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PostFiles.Count)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.User.UserName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreatedAt)
+                        </td>
+                        <td>
+                            <div class="d-flex">
+                                <a class="btn btn-success me-2 mb-auto" href="/admin/ApprovePost/@item.PostId">Aprovo</a>
+                                <a class="btn btn-dark me-2 mb-auto" href="/admin/UnapprovePost/@item.PostId">Mos Aprovo</a>
+                                <a class="btn btn-danger mb-auto" href="/admin/DeletePost/@item.PostId">Fshije</a>
+                            </div>
+                        </td>
+                    </tr>
+                }*@
+        </tbody>
+
+
+    </table>
+
+</div>
+
+@Scripts.Render("~/bundles/datatable")
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.css">
+
+<style>
+    a {
+        text-decoration: none !important;
+    }
+
+    .page-link.active {
+        background-color: #28a745 !important;
+        border-color: transparent;
+    }
+
+    .page-link a {
+        color: black !important;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        var js = jQuery.noConflict(true)
+        $("#post_table").DataTable({
+            serverSide: true,
+            columnDefs: [
+                { orderable: false, targets: -1 }
+            ],
+            ajax: {
+                url: "/Admin/GetPostList",
+                type: "POST"
+            },
+            processing: true,
+            filter: true,
+            columns: [
+                {
+                    "data": "Nr", "className": "dt-body-center",
+                    render: function (data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    },
+
+                },
+                { "data": "Title", "name": "Titulli", "autowidth": true },
+                { "data": "FileNumber", "name": "Numri i Skedarëve", "autowidth": true, "className": "dt-body-right" },
+                { "data": "AuthorUsername", "name": "Postuesi", "autowidth": true },
+                { "data": "DatePosted", "name": "Data e Postimit", "autowidth": true, "className": "dt-body-right" },
+                { "data": "PostStatus", "name": "Statusi e Postimit", "autowidth": true },
+
+                {
+                    "render": function (data, type, row) {
+                        if (row.PostStatus == "Draft") {
+                            return `<div class="d-flex">
+        <a class="btn btn-success me-2 mb-auto" href="/admin/ApprovePost/${row.PostId}">Aprovo</a>
+        <a class="btn btn-dark me-2 mb-auto" href="/admin/UnapprovePost/${row.PostId}">Refuzo</a>
+        <a class="btn btn-danger mb-auto" onclick="onDeleteModal(${row.PostId}, '${row.Title}')">Fshi</a>
+    </div>`} else {
+                            return      `<div class="d-flex">
+        Veprimi per kete postim eshte kryer
+    </div>`
+
+    }
+                        
+                    }
+                },
+
+            ],
+            language: {
+                lengthMenu: "Shfaq _MENU_ rrjeshta për faqe",
+                zeroRecords: "Nuk u gjet asgjë",
+                info: "Duke shfaqur faqen _PAGE_ nga _PAGES_",
+                infoEmpty: "Nuk ka rrjeshta të vlefshëm",
+                infoFiltered: "(filturar nga _MAX_ rrjeshta total)",
+                emptyTable: "Asnjë Postim në pritje",
+                loadingRecords: "Duke u ngarkuar...",
+                paginate: {
+                    first: "I Pari",
+                    last: "I Fundit",
+                    next: "Tjetri",
+                    previous: "Përpara"
+                },
+                search: "Kërko"
+            }
+        })
+    });
+
+    function onDeleteModal(postId, Title) {
+        var modal = $(`
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Konfirmo</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            Jeni të sigurt që doni të fshini "${Title}"?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Jo</button>
+                            <button type="button" onclick="onDelete(${postId})" data-bs-dismiss="modal" class="btn btn-danger">Fshi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`)
+        modal.modal("show")
+    }
+
+    function onDelete(id) {
+        $.ajax({
+            url: `/admin/DeletePost/${id}`
+        }).done(function () {
+            $("#post_table").DataTable().ajax.reload()
+        })
+    }
+</script>

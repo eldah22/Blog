@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Model1" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="CategoryId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ParentCategoryId" Type="Int32" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="Deleted" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Category1" Relationship="Self.FK__Category__Parent__45F365D3" FromRole="Category" ToRole="Category1" />
+    <NavigationProperty Name="Category2" Relationship="Self.FK__Category__Parent__45F365D3" FromRole="Category1" ToRole="Category" />
+    <NavigationProperty Name="PostCategories" Relationship="Self.FK__PostCateg__Categ__571DF1D5" FromRole="Category" ToRole="PostCategory" />
+  </EntityType>
+  <EntityType Name="Post">
+    <Key>
+      <PropertyRef Name="PostId" />
+    </Key>
+    <Property Name="PostId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Title" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PostStatusId" Type="Int32" Nullable="false" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="Deleted" Type="Boolean" Nullable="false" />
+    <Property Name="PublicatedAt" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="PostStatu" Relationship="Self.FK__Post__PostStatus__4AB81AF0" FromRole="Post" ToRole="PostStatus" />
+    <NavigationProperty Name="User" Relationship="Self.FK__Post__UserId__4BAC3F29" FromRole="Post" ToRole="User" />
+    <NavigationProperty Name="PostCategories" Relationship="Self.FK__PostCateg__PostI__5629CD9C" FromRole="Post" ToRole="PostCategory" />
+    <NavigationProperty Name="PostFiles" Relationship="Self.FK__PostFile__PostId__5BE2A6F2" FromRole="Post" ToRole="PostFile" />
+  </EntityType>
+  <EntityType Name="PostCategory">
+    <Key>
+      <PropertyRef Name="PostId" />
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="PostId" Type="Int32" Nullable="false" />
+    <Property Name="CategoryId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="Deleted" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Category" Relationship="Self.FK__PostCateg__Categ__571DF1D5" FromRole="PostCategory" ToRole="Category" />
+    <NavigationProperty Name="Post" Relationship="Self.FK__PostCateg__PostI__5629CD9C" FromRole="PostCategory" ToRole="Post" />
+  </EntityType>
+  <EntityType Name="PostFile">
+    <Key>
+      <PropertyRef Name="FileId" />
+    </Key>
+    <Property Name="FileId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PostId" Type="Int32" Nullable="false" />
+    <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="FileType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="FileName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Extension" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="Deleted" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Post" Relationship="Self.FK__PostFile__PostId__5BE2A6F2" FromRole="PostFile" ToRole="Post" />
+  </EntityType>
+  <EntityType Name="PostStatu">
+    <Key>
+      <PropertyRef Name="PostStatusId" />
+    </Key>
+    <Property Name="PostStatusId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Posts" Relationship="Self.FK__Post__PostStatus__4AB81AF0" FromRole="PostStatus" ToRole="Post" />
+  </EntityType>
+  <EntityType Name="Role">
+    <Key>
+      <PropertyRef Name="RoleId" />
+    </Key>
+    <Property Name="RoleId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="Deleted" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Users" Relationship="Self.FK__User__RoleId__3F466844" FromRole="Role" ToRole="User" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="UserId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="FirstName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="LastName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="EmailVerified" Type="Boolean" Nullable="false" />
+    <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="RoleId" Type="Int32" Nullable="false" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
+    <Property Name="Deleted" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Posts" Relationship="Self.FK__Post__UserId__4BAC3F29" FromRole="User" ToRole="Post" />
+    <NavigationProperty Name="Role" Relationship="Self.FK__User__RoleId__3F466844" FromRole="User" ToRole="Role" />
+  </EntityType>
+  <Association Name="FK__Category__Parent__45F365D3">
+    <End Role="Category" Type="Self.Category" Multiplicity="0..1" />
+    <End Role="Category1" Type="Self.Category" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="CategoryId" />
+      </Principal>
+      <Dependent Role="Category1">
+        <PropertyRef Name="ParentCategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__PostCateg__Categ__571DF1D5">
+    <End Role="Category" Type="Self.Category" Multiplicity="1" />
+    <End Role="PostCategory" Type="Self.PostCategory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Category">
+        <PropertyRef Name="CategoryId" />
+      </Principal>
+      <Dependent Role="PostCategory">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Post__PostStatus__4AB81AF0">
+    <End Role="PostStatus" Type="Self.PostStatu" Multiplicity="1" />
+    <End Role="Post" Type="Self.Post" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PostStatus">
+        <PropertyRef Name="PostStatusId" />
+      </Principal>
+      <Dependent Role="Post">
+        <PropertyRef Name="PostStatusId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Post__UserId__4BAC3F29">
+    <End Role="User" Type="Self.User" Multiplicity="1" />
+    <End Role="Post" Type="Self.Post" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="UserId" />
+      </Principal>
+      <Dependent Role="Post">
+        <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__PostCateg__PostI__5629CD9C">
+    <End Role="Post" Type="Self.Post" Multiplicity="1" />
+    <End Role="PostCategory" Type="Self.PostCategory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Post">
+        <PropertyRef Name="PostId" />
+      </Principal>
+      <Dependent Role="PostCategory">
+        <PropertyRef Name="PostId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__PostFile__PostId__5BE2A6F2">
+    <End Role="Post" Type="Self.Post" Multiplicity="1" />
+    <End Role="PostFile" Type="Self.PostFile" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Post">
+        <PropertyRef Name="PostId" />
+      </Principal>
+      <Dependent Role="PostFile">
+        <PropertyRef Name="PostId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__User__RoleId__3F466844">
+    <End Role="Role" Type="Self.Role" Multiplicity="1" />
+    <End Role="User" Type="Self.User" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Role">
+        <PropertyRef Name="RoleId" />
+      </Principal>
+      <Dependent Role="User">
+        <PropertyRef Name="RoleId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="BlogDatabaseEntities1" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Categories" EntityType="Self.Category" />
+    <EntitySet Name="Posts" EntityType="Self.Post" />
+    <EntitySet Name="PostCategories" EntityType="Self.PostCategory" />
+    <EntitySet Name="PostFiles" EntityType="Self.PostFile" />
+    <EntitySet Name="PostStatus" EntityType="Self.PostStatu" />
+    <EntitySet Name="Roles" EntityType="Self.Role" />
+    <EntitySet Name="Users" EntityType="Self.User" />
+    <AssociationSet Name="FK__Category__Parent__45F365D3" Association="Self.FK__Category__Parent__45F365D3">
+      <End Role="Category" EntitySet="Categories" />
+      <End Role="Category1" EntitySet="Categories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__PostCateg__Categ__571DF1D5" Association="Self.FK__PostCateg__Categ__571DF1D5">
+      <End Role="Category" EntitySet="Categories" />
+      <End Role="PostCategory" EntitySet="PostCategories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Post__PostStatus__4AB81AF0" Association="Self.FK__Post__PostStatus__4AB81AF0">
+      <End Role="PostStatus" EntitySet="PostStatus" />
+      <End Role="Post" EntitySet="Posts" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Post__UserId__4BAC3F29" Association="Self.FK__Post__UserId__4BAC3F29">
+      <End Role="User" EntitySet="Users" />
+      <End Role="Post" EntitySet="Posts" />
+    </AssociationSet>
+    <AssociationSet Name="FK__PostCateg__PostI__5629CD9C" Association="Self.FK__PostCateg__PostI__5629CD9C">
+      <End Role="Post" EntitySet="Posts" />
+      <End Role="PostCategory" EntitySet="PostCategories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__PostFile__PostId__5BE2A6F2" Association="Self.FK__PostFile__PostId__5BE2A6F2">
+      <End Role="Post" EntitySet="Posts" />
+      <End Role="PostFile" EntitySet="PostFiles" />
+    </AssociationSet>
+    <AssociationSet Name="FK__User__RoleId__3F466844" Association="Self.FK__User__RoleId__3F466844">
+      <End Role="Role" EntitySet="Roles" />
+      <End Role="User" EntitySet="Users" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

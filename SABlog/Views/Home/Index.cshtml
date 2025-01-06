@@ -1,0 +1,86 @@
+﻿@using PagedList.Mvc;
+
+@model PagedList.IPagedList<SABlog.Models.Post>
+
+@{
+    ViewBag.Title = "Faqja Kryesore";
+}
+
+<div class="row d-flex justify-content-center">
+    <div class="row d-flex justify-content-between">
+        @if (Model.Count > 0)
+        {
+            <div class="col-md-8 order-1 order-md-0">
+                <div class="d-flex justify-content-between">
+                    <div class="card-body mb-3 mt-5">
+                        <a class="btn @((ViewBag.OrderBy == "date") ? "btn-success" : "btn-light")" href="?orderBy=date">Të Fundit</a>
+                    </div>
+
+                </div>
+
+
+                @foreach (var p in Model)
+                {
+                    Html.RenderPartial("~/Views/Post/PostCard.cshtml", p);
+                }
+
+                <span class="d-flex justify-content-center p-4">Faqja @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) nga @Model.PageCount</span>
+                <div class="d-flex justify-content-center">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }), new PagedListRenderOptions
+                   {
+                       UlElementClasses = new List<string> { "pagination" },
+                       LiElementClasses = new List<string> { "page-link" },
+                   })
+
+                </div>
+
+            </div>
+            <div class="col-md-4 order-0 order-md-1">
+                <div class="text-end">
+                    <a href="/createPost" class="btn btn-success ms-auto mt-5 mb-3">
+                        Krijo një Postim
+                    </a>
+                </div>
+                <div class="card mb-3">
+                    <div class="card-header">Kërko</div>
+                    <div class="card-body">
+                        @using (Html.BeginForm("Search", "Home", FormMethod.Get))
+                        {
+                            @*<div class="form-outline">
+                                <input type="search" id="query" name="query" class="form-control mw-100" placeholder="Shkruaj tekstin e kërkimit" aria-label="Search" />
+                            </div>*@
+
+                            <button type="submit" class="btn btn-success my-3">
+                                Shfaq filtrat
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="text-end">
+                <a href="/createPost" class="btn btn-success ms-auto mt-5 mb-3">
+                    Krijo një Postim
+                </a>
+            </div>
+            <h1 class="text-center p-5">Asnjë Postim</h1>
+        }
+        <br />
+    </div>
+    </div>
+
+<style>
+    a {
+        text-decoration: none !important;
+    }
+    .page-link.active {
+        background-color: #28a745 !important;
+        border-color: transparent;
+    }
+    .page-link a {
+        color: black !important;
+    }
+</style>

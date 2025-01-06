@@ -1,0 +1,181 @@
+﻿@model SABlog.Models.User
+
+@{
+    ViewBag.Title = "Regjistrohu";
+}
+
+<br />
+
+<section class="vh-50 gradient-custom">
+    <div class="container py-5 h-100">
+        <div class="row justify-content-center align-items-center h-100">
+            <div class="col-12 col-lg-9 col-xl-7">
+                <div class="card shadow-2-strong card-registration" style="border-radius: 15px;">
+                    <div class="card-body p-4 p-md-5">
+                        <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Regjistrohu</h3>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-4 pb-2 pb-md-0 mb-md-5" })
+                        @using (Html.BeginForm("Register", "Auth", FormMethod.Post, new { @class = "needs-validation", @novalidate = true }))
+                        {
+
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="FirstName">Emri *</label>
+                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control form-control-lg", @placeholder = "Shkruaj Emrin", type = "text", maxlength = "30", @required = true,  onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Emri"!</div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-6 mb-4">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="LastName">Mbiemri *</label>
+                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control form-control-lg", @placeholder = "Shkruaj Mbiemrin", type = "text", maxlength = "30", @required = true,  onkeyup = "removeSpaces(this)" } })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Mbiemri"!</div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 pb-2">
+
+                                    <div class="form-outline">
+                                        <label class="form-label" for="Email">Email *</label>
+                                        @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control form-control-lg", type = "email", @placeholder = "Shkruaj Emailin", maxlength = "50", @required = true,  onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Email"!</div>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-md-6 mb-4">
+                                    <div class="form-outline">
+                                        <label class="form-label" for="UserName">Pseudonimi *</label>
+                                        @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control form-control-lg", type = "text", @placeholder = "Shkruaj Pseudonimin", maxlength = "50", @required = true,  onkeyup = "removeSpaces(this)" } })
+                                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Pseudonimi"!</div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 pb-2">
+                                    <label class="form-label" for="Password">Fjalëkalimi *</label>
+                                    <div class="input-group">
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-control-lg", type = "password", @placeholder = "Shkruaj Fjalëkalimin", @required = true, onkeyup = "removeLeadingSpaces(this)" } })
+                                        <span class="input-group-text togglePassword">
+                                            <i class="fa fa-eye" id="showPassword" onclick="togglePasswordVisiblity()" style="cursor: pointer"></i>
+                                        </span>
+                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                        <div class="invalid-feedback">Ju lutem plotësoni fushën "Fjalëkalimi"!</div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-6 pb-2">
+                                    <label class="form-label" for="Password">Konfirmo Fjalekalimin *</label>
+                                    <div class="input-group">
+                                        <input id="ConfirmPassword" name="ConfirmPassword"  onkeyup="removeLeadingSpaces(this)" placeholder="Përsërit Fjalëkalimin" type="password" class="form-control form-control-lg" required />
+                                        <span class="input-group-text togglePassword">
+                                            <i class="fa fa-eye" id="showConfirmPassword" onclick="togglePasswordConfirmVisiblity()" style="cursor: pointer"></i>
+                                        </span>
+                                        <div class="invalid-feedback">Fjalëkalimet duhet të jenë të njëjtë!</div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="d-flex ">
+                                <div class="pt-2">
+                                    <input class="btn btn-success ms-auto m-2" type="submit" value="Regjistrohu" />
+                                </div>
+
+
+                                <div class="ps-5">
+                                    <div class="alert px-4 py-3 mb-0 d-none alert-warning"
+                                         role="alert"
+                                         data-mdb-color="warning"
+                                         id="password-alert">
+                                        <ul class="list-unstyled mb-0">
+                                            <li class="requirements leng">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                <i class="fas fa-times text-danger me-3"></i>
+                                                Fjalëkalimi duhet të ketë të paktën 8 karaktere
+                                            </li>
+                                            <li class="requirements big-letter">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                <i class="fas fa-times text-danger me-3"></i>
+                                                Fjalëkalimi duhet të ketë të paktën 1 shkronjë të madhe.
+                                            </li>
+                                            <li class="requirements num">
+                                                <i class="fas fa-check text-success me-2"></i>
+                                                <i class="fas fa-times text-danger me-3"></i>
+                                                Fjalëkalimi duhet të ketë të paktën 1 numër.
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <p class="small fw-bold mt-2 pt-1 mb-0">
+                                Ke llogari? <a href="/Auth/Login"
+                                               class="link-danger">Logohu</a>
+                            </p>
+
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="~/Assets/register.js"></script>
+<script src="~/Assets/common.js"></script>
+
+
+<style>
+
+    .wrong .fa-check {
+        display: none;
+    }
+
+    .good .fa-times {
+        display: none;
+    }
+</style>
+
+<script>
+
+
+    function togglePasswordVisiblity() {
+        $("#showPassword").removeClass()
+        if ($("#Password").attr('type') == 'password') {
+            $("#showPassword").attr('class', 'fa fa-eye-slash')
+            $("#Password").attr('type', 'text')
+        } else {
+            $("#showPassword").attr('class', 'fa fa-eye')
+            $("#Password").attr('type', 'password')
+        }
+    }
+
+
+    function togglePasswordConfirmVisiblity() {
+        $("#showConfirmPassword").removeClass()
+        if ($("#ConfirmPassword").attr('type') == 'password') {
+            $("#showConfirmPassword").attr('class', 'fa fa-eye-slash')
+            $("#ConfirmPassword").attr('type', 'text')
+        } else {
+            $("#showConfirmPassword").attr('class', 'fa fa-eye')
+            $("#ConfirmPassword").attr('type', 'password')
+        }
+    }
+</script>

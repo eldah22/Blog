@@ -1,0 +1,95 @@
+﻿@using SABlog.Models;
+@model SABlog.ViewModels.PostCreate
+
+@{
+    ViewBag.Title = "Krijo Postim";
+    var categories= Model.Categories;
+    var user = (User)ViewBag.LoggedInUser;
+}
+
+<div class="container">
+    <main>
+        <h1 class="py-5 text-center">Krijo Postim</h1>
+        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-4 pb-2 pb-md-0 mb-md-5" })
+        @using (Html.BeginForm("CreatePost", "Post", FormMethod.Post, new { @class = "needs-validation", @novalidate = true, enctype = "multipart/form-data" }))
+        {
+            @Html.HiddenFor(model => model.UserId, new { @Value = user.UserId })
+            <div class="row g-5">
+                <div class="col-md-7 col-lg-8">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label">Titulli *</label>
+                            @Html.EditorFor(model => model.PostTitle, new { htmlAttributes = new { @class = "form-control form-control-lg", @placeholder = "Shkruaj Titullin e Postimit", @style = "max-width: 100%", @required = true,  pattern= "^[^\\s].{10,}", onkeyup="removeLeadingSpaces(this)" } })
+                            @Html.ValidationMessageFor(model => model.PostTitle, "", new { @class = "text-danger" })
+                            <div class="invalid-feedback">Ju lutem plotësoni fushën "Titulli"!</div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Përshkrimi *</label>
+                            <textarea minLength="20" class="form-control form-control-lg" id="PostContent" name="PostContent" rows="15" style="max-width: 100%" pattern= "^[^\\s].*" onkeyup="removeLeadingSpaces(this)" placeholder="Shkruaj Përshkrimin e Postimit" required></textarea>
+                            @Html.ValidationMessageFor(model => model.PostContent, "", new { @class = "text-danger" })
+                            <div class="invalid-feedback">Ju lutem plotësoni fushën "Përshkrimi"!</div>
+                        </div>
+
+                        @if (Model.Categories.Count > 0)
+                        {
+                            <div class="card col-md-4 m-md-2" id="categoriesCard">
+                                <div class="card-body">
+                                    <h5>Kategoritë *</h5>
+                                    <div class="row p-2">
+
+                                        @foreach (var c in categories)
+                                        {
+                                            <div class="form-check">
+                                                @Html.HiddenFor(model => model.SelectedCategories[Model.SelectedCategories.IndexOf(Model.SelectedCategories.Find(it => it.Name == c.Name))].Name)
+                                                @Html.CheckBoxFor(model => model.SelectedCategories[Model.SelectedCategories.IndexOf(Model.SelectedCategories.Find(it => it.Name == c.Name))].Selected, new { @class = "form-check-input" })
+                                                <label class="form-check-label" for="flexCheckDefault">
+                                                    @c.Name
+                                                </label>
+
+                                              
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="text-dark mb-3 text-center">Ngarko Foto / Dokument *</h4>
+                    <div class="form-group files">
+                        <div class="card mb-4" id="fileListBody">
+                            <div class="card-body" id="fileList">
+
+                            </div>
+                        </div>
+
+
+                        <div class="d-flex flex-column justify-content-center">
+                            <div class="btn btn-success btn-rounded rounded-5 mx-5" id="uploadButton">
+                                <label class="form-label text-white m-1 text-center" for="TempFiles" style="cursor: pointer;" id="uploadLabel">Shto Skedarë</label>
+                            </div>
+                            <input type="file" name="UploadedFiles" accept=".jpg,.jpeg,.png,.gif,.webp,.xls,.xlsx,.pdf,.doc,.docx,.ppt,.pptx" required multiple="multiple" id="UploadedFiles" class="form-control d-none file-upload" value="System.Collections.Generic.List`1[System.Web.HttpPostedFileBase]" />
+                            <input type="file" name="TempFiles" accept=".jpg,.jpeg,.png,.gif,.webp,.xls,.xlsx,.pdf,.doc,.docx,.ppt,.pptx" multiple="multiple" id="TempFiles" class="form-control d-none file-upload" onchange="onFileUpload(this)" value="System.Collections.Generic.List`1[System.Web.HttpPostedFileBase]" />
+                            <div class="invalid-feedback text-center">Ju lutem ngarkoni të paktën një skedar!</div>
+                            <div class="p-4 text-center text-danger d-flex justify-content-center invisible" id="errorFile">
+                                <div id="errorFileText">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="d-flex justify-content-center justify-content-md-start">
+                <button class="my-3 btn btn-primary btn-lg" type="submit">Krijo Postimin</button>
+            </div>
+        }
+
+    </main>
+</div>
+
+<script src="~/Assets/createpost.js"></script>
+<script src="~/Assets/common.js"></script>

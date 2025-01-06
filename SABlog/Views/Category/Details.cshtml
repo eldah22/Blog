@@ -1,0 +1,180 @@
+﻿@model SABlog.Models.Category
+
+@{
+    ViewBag.Title = "Kategoria - " + Model.Name;
+    var posts = Model.PostCategories.Where(it => it.Post.PostStatu.Status == "Publik" && !it.Post.Deleted);
+}
+
+
+
+    <div class="album py-5">
+        <div class="container">
+            <div class="p-5 text-center">
+                <h1 class="display-1" id="catname">@Model.Name</h1>
+                <h3 class="display-" id="catdescr">@Model.Description</h3>
+                <button type="button" class="btn btn-outline-success ms-auto m-4" id="Done" style="display: none" onclick="UpdateCategory()">
+                    Done
+                </button>
+            </div>
+
+
+
+            @if (posts.Count() > 0)
+            {
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 d-flex justify-content-start">
+                    @foreach (var p in posts.OrderByDescending(it => it.CreatedAt))
+                    {
+                        <div class="col-md-6">
+                            @{Html.RenderPartial("~/Views/Post/PostCard.cshtml", p.Post);}
+                        </div>
+                    }
+                </div>
+                    }
+                    else
+                    {
+                    <h1 class="text-center p-5 w-100">Asnjë Post</h1>
+                    <div class="text-center" >
+                        <button type="button" class="btn btn-outline-info ms-auto m-4" onclick="onCatUpdate()">
+                            Edito
+                        </button>
+
+                        <button type="button" class="btn btn-outline-danger ms-auto m-4" onclick="onCatDeleteModal()">Fshi</button>
+                    </div>
+                    <div class="text-center">
+                        
+
+                    </div>
+                    }
+
+              
+                <div class="text-center">
+                    <a href="/category" class="btn btn-success ms-auto m-4" id="katg">
+                        Shiko të gjitha Kategoritë
+                    </a>
+                </div>
+            </div>
+
+    </div>
+
+
+    <script>
+
+        function onCatDeleteModal() {
+            var modal = $(`
+     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h5 class="modal-title" id="exampleModalLabel">Konfirmo</h5>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                 </div>
+                 <div class="modal-body">
+                     Jeni të sigurt që do të fshini këtë kategori?
+                 </div>
+                 <div class="modal-footer">
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Jo</button>
+                     <button type="button" onclick="onCatDelete()" data-bs-dismiss="modal" class="btn btn-danger">Fshi</button>
+                 </div>
+             </div>
+         </div>
+     </div>`)
+            modal.modal("show")
+        }
+
+
+    function onCatDelete() {
+    var CategoryId = @Model.CategoryId;
+
+    $.ajax({
+        url: "/Cat/DeleteElda",
+        data: { CategoryId: CategoryId },
+        type: "POST",
+
+        dataType: 'json',
+        success: function (r) {
+            if (r.response !== "success") {
+                alert("Kategoria nuk u fshi dot");
+            } else {
+
+                document.getElementById('katg').click();            }
+        },
+        error: function () {
+            alert("gabim");
+        }
+    });
+    }
+
+        function onCatUpdate() {
+
+
+        var updateModal = $(`
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Përditëso Kategorine</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label for="inputText1" class="form-label">Titulli</label>
+                    <input type="text" class="form-control" id="inputText1" placeholder="Vendosni titullin">
+                </div>
+                <div class="mb-3">
+                    <label for="inputText2" class="form-label">Përshkrimi</label>
+                    <input type="text" class="form-control" id="inputText2" placeholder="Vendosni përshkrimin">
+                </div>
+
+
+                <p>Jeni të sigurt që dëshironi të përditësoni këtë kategori?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Jo</button>
+                <button type="button" onclick="UpdateCategory()" data-bs-dismiss="modal" class="btn btn-primary">Përditëso</button>
+            </div>
+        </div>
+    </div>
+</div>`);
+
+   $('body').append(updateModal);
+
+
+        $('#inputText1').val(`@Model.Name`);
+$('#inputText2').val(`@Model.Description`);
+
+$('#updateModal').modal('show');
+
+
+    }
+
+      
+        function UpdateCategory() {
+            var emri = $('#inputText1').val().trim()
+            var pershkrimi = $('#inputText2').val().trim()
+            var id = @Model.CategoryId;
+
+            $.ajax({
+                url: "/Cat/Update",  
+                data: {
+                    emri: emri,
+                    id: id,
+                    pershkrimi, pershkrimi
+                },  
+                type: "POST",  
+
+                dataType: 'json',
+                success: function (r) {
+                    if (r.response !== "Kategoria u ndryshua me sukses") {
+                        alert(r);
+                    } else {
+                        
+                        document.getElementById('katg').click();
+                    }
+                },
+                error: function () {
+                    alert("gabim");
+                }
+            });
+        }
+    </script>

@@ -1,0 +1,185 @@
+﻿@using SABlog.Models;
+
+
+@{
+    var user = (User)ViewBag.LoggedInUser;
+
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+
+    <script>
+        var startTime = (new Date()).getTime();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var endTime = (new Date()).getTime();
+            var millisecondsLoading = endTime - startTime;
+            $("#loadedIn").text("Ngarkuar në: " + millisecondsLoading + " ms")
+            if (millisecondsLoading > 1000) {
+                $("#loadedIn").removeClass().addClass("text-end text-danger")
+            } else {
+                $("#loadedIn").removeClass().addClass("text-end text-success")
+            }
+        });
+    </script>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top flex-md-nowrap">
+        <div class="container">
+            @Html.ActionLink("BLOG", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    @if (User.Identity.IsAuthenticated && user != null)
+                    {
+                        <li>
+                            <div class="">
+                                <button class="btn btn-light" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
+                                    <div class="d-flex flex-row align-items-center gap-3">
+                                        <a style="text-decoration: none" class="" href="/u/@user.UserName">
+                                            <div class="d-flex justify-content-between">
+                                                <img src="~/Content/Images/pfp.png" width="40" class="rounded-circle">
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-dark px-2 fw-bold text-start">@user.FirstName @user.LastName</small>
+                                                    <small class="text-dark px-2">@@@user.UserName</small>
+                                                </div>
+                                            </div>
+                                        </a>
+
+                                    </div>
+                                </button>
+                            </div>
+                        </li>
+                        if (Context.User.IsInRole("admin"))
+                        {
+                            <li>
+                                <div class="">
+                                    <button class="btn btn-light" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
+                                        <div class="d-flex flex-row align-items-center gap-3">
+                                            <a style="text-decoration: none" class="" href="/Admin">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-column">
+                                                        <small class="text-dark px-2 fw-bold text-start">Faqja e Adminit </small>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    </button>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="">
+                                    <button class="btn btn-light" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
+                                        <div class="d-flex flex-row align-items-center gap-3">
+                                            <a style="text-decoration: none" class="" href="/Category">
+                                                <div class="d-flex justify-content-between">
+                                                    <div class="d-flex flex-column">
+                                                        <small class="text-dark px-2 fw-bold text-start">Kategoritë</small>
+                                                    </div>
+                                                </div>
+                                            </a>
+
+                                        </div>
+                                    </button>
+                                </div>
+                            </li>
+
+                        }
+
+                        <li>
+                            <div class="">
+                                <button class="btn btn-light" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
+                                    <div class="d-flex flex-row align-items-center gap-3">
+                                        <a style="text-decoration: none" class="" href="/updateProfile">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-dark px-2 fw-bold text-start">Përditëso Profilin</small>
+                                                </div>
+                                            </div>
+                                        </a>
+
+                                    </div>
+                                </button>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="">
+                                <button class="btn btn-light" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
+                                    <div class="d-flex flex-row align-items-center gap-3">
+                                        <a style="text-decoration: none" href="/privacy">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-dark px-2 fw-bold text-start">Privatësia e Përdoruesit</small>
+                                                </div>
+                                            </div>
+                                        </a>
+
+                                    </div>
+                                </button>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="">
+                                <button class="btn btn-light" type="button" data-bs-toggle="" aria-haspopup="true" aria-expanded="false">
+                                    <div class="d-flex flex-row align-items-center gap-3">
+                                        <a style="text-decoration: none" href="/Auth/Logout">
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex flex-column">
+                                                    <small class="text-dark px-2 fw-bold text-start">Dil</small>
+                                                </div>
+                                            </div>
+                                        </a>
+
+                                    </div>
+                                </button>
+                            </div>
+                        </li>
+                        @*<ul class=" position-absolute dropdown-menu-left">*@
+
+
+                        @*<li><a class="m" href="/updateProfile">Përditëso Profilin</a></li>*@
+                        @*<li><a class="" href="/privacy">Privatësia e Përdoruesit</a></li>*@
+                        @*<li><hr class=""></li>
+            <li>
+                <a class="" href="/Auth/Logout">Dil</a>
+            </li>*@
+                        @*</ul>*@
+
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        <div class="d-flex min-vh-100 flex-column justify-content-between">
+            <div>
+                @RenderBody()
+            </div>
+            <footer>
+                <hr />
+                <div class="d-flex justify-content-between">
+                    <p>&copy; @DateTime.Now.Year - BLOG</p>
+                    <p class="text-end" id="loadedIn"></p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
